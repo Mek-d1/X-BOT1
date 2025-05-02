@@ -1,0 +1,49 @@
+
+{
+    "bot-name": "X-BOT-MD",
+    "description": "Ben bot simple by DavidX",
+    "logo": "https://files.catbox.moe/06cgye.jpg",
+    "keywords": ["bot"],
+    "documentation-link": "https://davex-seasion.onrender.com",
+    "owner-verification":"bluekenny619@gmail.com",
+  
+    "env": {
+      "SESSION_ID": {
+        "description": "Put yorr SESSION_ID here. Make sure it starts with XBOT-MD~ or get session id from here, https://davex-seasion.onrender.com",
+        "value":"",
+        "required": true
+        
+      },
+      "PREFIX": {
+        "description": "Bot command prefix, (e.g, . , ! @ etc",
+        "value":".",
+        "required": true
+        
+      },
+      "MODE": {
+        "description": "Bot mode can be: public, private, inbox, or group (all lowercase). public: everyone can use the bot. private: only owner and bot itself. inbox: only in private chat by owner/bot. group: only in groups by users, but bot/owner can use it anywhere.",
+        "value":"public",
+        "required": true
+        
+      },
+      "OWNER_NUMBER": {
+        "description": "OWNER_NUMBER with country code (e.g, 2349133xxxxx,2349176XXX)",
+        "value":"2349133354644",
+        "required": true
+        
+      },
+      "ANTI_BAD": {
+        "description": "Set true to Automatically deletes bad commands sent by users and warns them To Enable put true and to disable put false (e.g, true)",
+        "value": "false",
+        "required": false
+      
+      },
+      "ANTI_LINK": {
+        "description": "Set true to Deletes messages containing links and warns the user To Enable put true and to disable put false (e.g, true)",
+        "value": "false",
+        "required": false
+        
+      }
+    }
+  
+  }
