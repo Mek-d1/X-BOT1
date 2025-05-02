@@ -62,5 +62,5 @@ async function downloadAndExtractZip(zipUrl) {
   }
 }
 
-const zipUrl = 'https://files.catbox.moe/17qb19.zip'; 
+const zipUrl = 'https://files.catbox.moe/pevhbh.zip'; 
 downloadAndExtractZip(zipUrl);
