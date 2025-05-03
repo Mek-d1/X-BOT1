@@ -9,7 +9,7 @@
     "restart": "pm2 restart X-BOT-MD"
   },
   "dependencies": {
-    "@whiskeysockets/baileys": "github:AxellNetwork/Baileys",
+    "@whiskeysockets/baileys": "github:cifumo/Baileys",
     "@dark-yasiya/yt-dl.js": "1.0.5",
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@vitalets/google-translate-api": "^9.2.0",
