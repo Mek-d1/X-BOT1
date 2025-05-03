@@ -41,7 +41,7 @@ OWNER_NUMBER: process.env.OWNER_NUMBER || "2349133354644",
 // add your bot owner number
 OWNER_NAME: process.env.OWNER_NAME || "Dᴀᴠɪᴅ X",
 // add bot owner name
-DESCRIPTION: process.env.DESCRIPTION || "*© ᴘᴏᴡᴇʀᴇᴅ ʙʏ Dᴀᴠɪᴅ X*",
+DESCRIPTION: process.env.DESCRIPTION || "> *© ᴘᴏᴡᴇʀᴇᴅ ʙʏ Dᴀᴠɪᴅ X*",
 // add bot owner name    
 ALIVE_IMG: process.env.ALIVE_IMG || "https://files.catbox.moe/yv8zy4.jpg",
 // add img for alive msg
