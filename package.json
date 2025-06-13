@@ -62,7 +62,6 @@
     "sequelize": "^6.37.5",
     "sqlite3": "latest",
     "util": "^0.12.4",
-    "pm2": "^5.2.0",
     "vm": "^0.1.0",
     "wa-sticker-formatter": "^4.4.4",
     "wa_set_pkg": "1.0.5",
