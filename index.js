@@ -183,3 +183,4 @@ async function downloadAndExtractRepo() {
       process.exit(1);
     }
   }, 4000);
+  })();
